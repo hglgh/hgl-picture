@@ -30,7 +30,7 @@
                 <a-menu>
                   <a-menu-item>
                     <router-link to="/my_space">
-                      <UserOutlined/>
+                      <UserOutlined />
                       我的空间
                     </router-link>
                   </a-menu-item>
@@ -52,12 +52,9 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import {
-  HomeOutlined,
-  LoginOutlined,
-  UserOutlined
-} from '@ant-design/icons-vue'
-import { MenuProps, message } from 'ant-design-vue'
+import { HomeOutlined, LoginOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import type { MenuProps } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import { userLogoutUsingPost } from '@/api/yonghujiekou'
@@ -103,7 +100,7 @@ const originItems = [
 //根据权限过滤菜单项
 const filterMenus = (menus = [] as MenuProps['items']) => {
   return menus?.filter((menu) => {
-    if (menu?.key?.startsWith('/admin')) {
+    if ((menu?.key as string)?.startsWith('/admin')) {
       const loginUser = loginUserStroe.loginUser
       if (!loginUser || loginUser.userRole !== 'admin') {
         return false
@@ -116,7 +113,7 @@ const filterMenus = (menus = [] as MenuProps['items']) => {
 const items = computed<MenuProps['items']>(() => filterMenus(originItems))
 const router = useRouter()
 //路由跳转事件
-const doMenuClick = ({ key }) => {
+const doMenuClick = ({ key }: any) => {
   router.push({
     path: key,
   })
@@ -152,11 +149,13 @@ const doLoginout = async () => {
   display: flex;
   align-items: center;
 }
+
 .title {
   color: black;
   font-size: 20px;
   margin-left: 16px;
 }
+
 .logo {
   height: 50px;
 }

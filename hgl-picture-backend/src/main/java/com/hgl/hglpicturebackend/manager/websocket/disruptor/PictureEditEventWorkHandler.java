@@ -5,10 +5,12 @@ import com.hgl.hglpicturebackend.manager.websocket.pictureEditHandler;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditRequestMessage;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditResponseMessage;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageStrategyFactory;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.service.UserService;
 import com.lmax.disruptor.WorkHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -31,15 +33,19 @@ public class PictureEditEventWorkHandler implements WorkHandler<PictureEditEvent
     @Resource
     private UserService userService;
 
+    @Lazy
+    @Resource
+    private MessageStrategyFactory messageStrategyFactory;
+
     @Override
-    public void onEvent(PictureEditEvent event) throws Exception {
+    public void onEvent(@NotNull PictureEditEvent event) throws Exception {
         PictureEditRequestMessage pictureEditRequestMessage = event.getPictureEditRequestMessage();
         WebSocketSession session = event.getSession();
         User user = event.getUser();
         Long pictureId = event.getPictureId();
         // 获取到消息类别
         String type = pictureEditRequestMessage.getType();
-        PictureEditMessageTypeEnum pictureEditMessageTypeEnum = PictureEditMessageTypeEnum.valueOf(type);
+/*        PictureEditMessageTypeEnum pictureEditMessageTypeEnum = PictureEditMessageTypeEnum.valueOf(type);
         // 调用对应的消息处理方法
         switch (pictureEditMessageTypeEnum) {
             case ENTER_EDIT:
@@ -57,6 +63,7 @@ public class PictureEditEventWorkHandler implements WorkHandler<PictureEditEvent
                 pictureEditResponseMessage.setMessage("消息类型错误");
                 pictureEditResponseMessage.setUser(userService.getUserVO(user));
                 session.sendMessage(new TextMessage(JSONUtil.toJsonStr(pictureEditResponseMessage)));
-        }
+        }*/
+        messageStrategyFactory.getStrategy(type).handle(pictureEditRequestMessage, session, user, pictureId);
     }
 }

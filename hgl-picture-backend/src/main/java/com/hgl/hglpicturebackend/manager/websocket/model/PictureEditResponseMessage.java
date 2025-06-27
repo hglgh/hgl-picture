@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author 请别把我整破防
- * @description 图片编辑响应消息
+ * @description 图片编辑响应消息(服务器发送给客户端)
  */
 @Data
 @NoArgsConstructor

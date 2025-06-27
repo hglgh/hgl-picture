@@ -10,9 +10,15 @@ import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditActionEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditRequestMessage;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditResponseMessage;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.EditActionMessageStrategy;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageHandleStrategy;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageStrategyFactory;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.service.UserService;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -38,7 +44,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class pictureEditHandler extends TextWebSocketHandler {
 
+    /**
+     * -- GETTER --
+     * 获取 pictureEditingUsers（供策略类使用）
+     */
     // 每张图片的编辑状态，key: pictureId, value: 当前正在编辑的用户 ID
+    @Getter
     private final Map<Long, Long> pictureEditingUsers = new ConcurrentHashMap<>();
 
     // 保存所有连接的会话，key: pictureId, value: 用户会话集合
@@ -49,6 +60,10 @@ public class pictureEditHandler extends TextWebSocketHandler {
 
     @Resource
     private PictureEditEventProducer pictureEditEventProducer;
+
+    @Lazy
+    @Resource
+    private MessageStrategyFactory messageStrategyFactory;
 
     /**
      * 连接建立成功
@@ -108,7 +123,8 @@ public class pictureEditHandler extends TextWebSocketHandler {
         Long pictureId = (Long) attributes.get("pictureId");
         User user = (User) attributes.get("user");
         // 移除当前用户的编辑状态
-        handleExitEditMessage(null, session, user, pictureId);
+        MessageHandleStrategy exitEditMessageStrategy = messageStrategyFactory.getStrategy(PictureEditMessageTypeEnum.EXIT_EDIT.getValue());
+        exitEditMessageStrategy.handle(null, session, user, pictureId);
 
         // 删除会话
         Set<WebSocketSession> sessionSet = pictureSessions.get(pictureId);
@@ -137,6 +153,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @param pictureId                 图片 ID
      * @throws Exception 抛出异常
      */
+/*    @Deprecated
     public void handleEnterEditMessage(PictureEditRequestMessage pictureEditRequestMessage, WebSocketSession session, User user, Long pictureId) throws Exception {
         //没有用户正在编辑该图片，才能进入编辑
         if (!pictureEditingUsers.containsKey(pictureId)) {
@@ -153,7 +170,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
         }
     }
 
-    /**
+    *//**
      * 处理执行编辑操作的消息
      *
      * @param pictureEditRequestMessage 消息
@@ -161,7 +178,8 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @param user                      用户
      * @param pictureId                 图片 ID
      * @throws Exception 抛出异常
-     */
+     *//*
+    @Deprecated
     public void handleEditActionMessage(PictureEditRequestMessage pictureEditRequestMessage, WebSocketSession session, User user, Long pictureId) throws Exception {
         if (pictureEditingUsers.containsKey(pictureId)) {
             Long editingUserId = pictureEditingUsers.get(pictureId);
@@ -183,7 +201,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
         }
     }
 
-    /**
+    *//**
      * 处理退出编辑状态的消息
      *
      * @param pictureEditRequestMessage 消息
@@ -191,7 +209,8 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @param user                      用户
      * @param pictureId                 图片 ID
      * @throws Exception 抛出异常
-     */
+     *//*
+    @Deprecated
     public void handleExitEditMessage(PictureEditRequestMessage pictureEditRequestMessage, WebSocketSession session, User user, Long pictureId) throws Exception {
         Long editingUserId = pictureEditingUsers.get(pictureId);
         if (editingUserId != null && editingUserId.equals(user.getId())) {
@@ -205,7 +224,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
             pictureEditResponseMessage.setUser(userService.getUserVO(user));
             broadcastToPicture(pictureId, pictureEditResponseMessage);
         }
-    }
+    }*/
 
     /**
      * 广播给图片的所有用户(支持排除掉某个Session)
@@ -213,7 +232,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @param pictureId                  图片 ID
      * @param pictureEditResponseMessage 广播的消息
      */
-    private void broadcastToPicture(Long pictureId, PictureEditResponseMessage pictureEditResponseMessage, WebSocketSession excludeSession) throws Exception {
+    public void broadcastToPicture(Long pictureId, PictureEditResponseMessage pictureEditResponseMessage, WebSocketSession excludeSession) throws Exception {
         Set<WebSocketSession> sessionSet = pictureSessions.get(pictureId);
         if (CollUtil.isNotEmpty(sessionSet)) {
             // 创建 ObjectMapper
@@ -240,7 +259,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
     }
 
     // 全部广播
-    private void broadcastToPicture(Long pictureId, PictureEditResponseMessage pictureEditResponseMessage) throws Exception {
+    public void broadcastToPicture(Long pictureId, PictureEditResponseMessage pictureEditResponseMessage) throws Exception {
         broadcastToPicture(pictureId, pictureEditResponseMessage, null);
     }
 

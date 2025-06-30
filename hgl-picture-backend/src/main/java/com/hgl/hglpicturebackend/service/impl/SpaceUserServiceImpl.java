@@ -3,6 +3,7 @@ package com.hgl.hglpicturebackend.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hgl.hglpicturebackend.exception.BusinessException;
@@ -43,6 +44,7 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
 
     @Resource
     private SpaceService spaceService;
+
     @Override
     public long addSpaceUser(SpaceUserAddRequest spaceUserAddRequest) {
         // 参数校验
@@ -68,6 +70,9 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
             ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR, "用户不存在");
             Space space = spaceService.getById(spaceId);
             ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+            //校验是否已添加该成员
+            SpaceUser isExitSpaceUser = this.getOne(new LambdaQueryWrapper<SpaceUser>().eq(SpaceUser::getSpaceId, spaceId).eq(SpaceUser::getUserId, userId));
+            ThrowUtils.throwIf(isExitSpaceUser != null, ErrorCode.OPERATION_ERROR, "空间已添加该成员");
         }
         // 校验空间角色
         String spaceRole = spaceUser.getSpaceRole();

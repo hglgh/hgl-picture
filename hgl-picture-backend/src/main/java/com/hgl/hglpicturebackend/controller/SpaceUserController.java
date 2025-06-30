@@ -10,11 +10,14 @@ import com.hgl.hglpicturebackend.exception.ThrowUtils;
 import com.hgl.hglpicturebackend.manager.auth.annotation.SaSpaceCheckPermission;
 import com.hgl.hglpicturebackend.manager.auth.constant.SpaceUserPermissionConstant;
 import com.hgl.hglpicturebackend.model.dto.spaceuser.SpaceUserAddRequest;
+import com.hgl.hglpicturebackend.model.dto.spaceuser.SpaceUserDeleteRequest;
 import com.hgl.hglpicturebackend.model.dto.spaceuser.SpaceUserEditRequest;
 import com.hgl.hglpicturebackend.model.dto.spaceuser.SpaceUserQueryRequest;
+import com.hgl.hglpicturebackend.model.entity.Space;
 import com.hgl.hglpicturebackend.model.entity.SpaceUser;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.model.vo.spaceuser.SpaceUserVO;
+import com.hgl.hglpicturebackend.service.SpaceService;
 import com.hgl.hglpicturebackend.service.SpaceUserService;
 import com.hgl.hglpicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,9 @@ public class SpaceUserController {
     private SpaceUserService spaceUserService;
 
     @Resource
+    private SpaceService spaceService;
+
+    @Resource
     private UserService userService;
 
     /**
@@ -58,15 +64,19 @@ public class SpaceUserController {
      */
     @PostMapping("/delete")
     @SaSpaceCheckPermission(SpaceUserPermissionConstant.SPACE_USER_MANAGE)
-    public BaseResponse<Boolean> deleteSpaceUser(@RequestBody DeleteRequest deleteRequest,
+    public BaseResponse<Boolean> deleteSpaceUser(@RequestBody SpaceUserDeleteRequest spaceUserDeleteRequest,
                                                  HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+        if (spaceUserDeleteRequest == null || spaceUserDeleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long id = deleteRequest.getId();
+        long id = spaceUserDeleteRequest.getId();
         // 判断是否存在
         SpaceUser oldSpaceUser = spaceUserService.getById(id);
         ThrowUtils.throwIf(oldSpaceUser == null, ErrorCode.NOT_FOUND_ERROR);
+        // 所有管理员都不允许删除空间的创建者
+        Long spaceId = spaceUserDeleteRequest.getSpaceId();
+        Space space = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(space.getUserId().equals(oldSpaceUser.getUserId()), ErrorCode.OPERATION_ERROR, "无法删除空间创建者");
         // 操作数据库
         boolean result = spaceUserService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -123,6 +133,9 @@ public class SpaceUserController {
         long id = spaceUserEditRequest.getId();
         SpaceUser oldSpaceUser = spaceUserService.getById(id);
         ThrowUtils.throwIf(oldSpaceUser == null, ErrorCode.NOT_FOUND_ERROR);
+        // 所有管理员都不允许修改空间的创建者
+        Space space = spaceService.getById(spaceUserEditRequest.getSpaceId());
+        ThrowUtils.throwIf(space.getUserId().equals(oldSpaceUser.getUserId()), ErrorCode.OPERATION_ERROR, "无法修改空间创建者权限");
         // 操作数据库
         boolean result = spaceUserService.updateById(spaceUser);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);

@@ -30,6 +30,7 @@ import com.hgl.hglpicturebackend.service.SpaceService;
 import com.hgl.hglpicturebackend.mapper.SpaceMapper;
 import com.hgl.hglpicturebackend.service.SpaceUserService;
 import com.hgl.hglpicturebackend.service.UserService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
     @Resource
     private TransactionTemplate transactionTemplate;
 
-    //为了方便部署，注释调分表
+    //为了方便部署，注释掉分表
 /*    @Lazy
     @Resource
     private DynamicShardingManager dynamicShardingManager;*/
@@ -211,13 +212,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
     }
 
     @Override
-    public void checkSpaceAuth(User loginUser, Space space) {
+    public void checkSpaceAuth(@NotNull User loginUser, @NotNull Space space) {
         if (!space.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
     }
 
-    private void fillDefaultValues(Space space) {
+    private void fillDefaultValues(@NotNull Space space) {
         if (StringUtils.isBlank(space.getSpaceName())) {
             space.setSpaceName("默认空间");
         }
@@ -232,7 +233,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         this.fillSpaceBySpaceLevel(space);
     }
 
-    private void checkUserPermission(Space space, User loginUser) {
+    private void checkUserPermission(@NotNull Space space, User loginUser) {
         if (SpaceLevelEnum.COMMON.getValue() != space.getSpaceLevel() && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户无权限创建指定级别的空间");
         }

@@ -8,7 +8,7 @@
           >分析公共图库
         </a-button>
         <a-button type="primary" ghost href="/space_analyze?queryAll=1" target="_blank"
-          >分享全部空间
+          >分析全部空间
         </a-button>
       </a-space>
     </a-flex>
@@ -37,7 +37,7 @@
           <a-select
             v-model:value="record.spaceRole"
             :options="SPACE_ROLE_OPTIONS"
-            @change="(value) => editSpaceRole(value, record)"
+            @change="(value: string) => editSpaceRole(value, record)"
           />
         </template>
         <template v-else-if="column.dataIndex === 'createTime'">
@@ -62,7 +62,7 @@ import {
   addSpaceUserUsingPost,
   deleteSpaceUserUsingPost,
   editSpaceUserUsingPost,
-  listSpaceUserUsingPost
+  listSpaceUserUsingPost,
 } from '@/api/spaceUserController'
 
 interface Props {
@@ -104,7 +104,7 @@ const fetchData = async () => {
     return
   }
   const res = await listSpaceUserUsingPost({
-    spaceId: spaceId,
+    spaceId: spaceId as any,
   })
   if (res.data.code === 0 && res.data.data) {
     dataList.value = res.data.data ?? []
@@ -122,12 +122,16 @@ const doDelete = async (id: string) => {
   if (!id) {
     return
   }
-  const res = await deleteSpaceUserUsingPost({ id })
+  const idNumber = Number(id)
+  const res = await deleteSpaceUserUsingPost({
+    id: idNumber,
+    spaceId: props.id as any,
+  })
   if (res.data.code === 0 && res.data.data) {
     message.success('删除成功')
     await fetchData()
   } else {
-    message.error('删除失败')
+    message.error('删除失败:' + res.data.message)
   }
 }
 
@@ -135,6 +139,7 @@ const editSpaceRole = async (value: string, record: API.SpaceUserVO) => {
   const res = await editSpaceUserUsingPost({
     id: record.id,
     spaceRole: value,
+    spaceId: props.id as any,
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('修改成功')
@@ -148,9 +153,10 @@ const handleSubmit = async () => {
   if (!spaceId) {
     return
   }
+  const spaceNumber = Number(spaceId)
   const respone = await addSpaceUserUsingPost({
-    spaceId,
-    ...formData
+    spaceId: spaceNumber,
+    ...formData,
   })
   if (respone.data.code === 0) {
     message.success('添加成功')

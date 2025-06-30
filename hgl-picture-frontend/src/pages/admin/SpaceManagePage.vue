@@ -102,7 +102,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { listSpaceByPageUsingPost } from '@/api/spaceController'
+import { deleteSpaceUsingPost, listSpaceByPageUsingPost } from '@/api/spaceController'
 import { SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS, SPACE_TYPE_MAP, SPACE_TYPE_OPTIONS } from '@/constants/space'
 import { formatSize } from '@/utils'
 

@@ -1,7 +1,7 @@
 <template>
   <div id="addSpacePage">
     <h2 style="margin-bottom: 16px">
-      {{ route.query?.id ? '修改' : '创建' }} {{SPACE_TYPE_MAP[spaceType]}}
+      {{ route.query?.id ? '修改' : '创建' }} {{ SPACE_TYPE_MAP[spaceType] }}
     </h2>
     <a-form layout="vertical" :model="spaceForm" name="spaceForm" @finish="handleSubmit">
       <a-form-item label="空间名称" name="spaceName">
@@ -101,7 +101,7 @@ const handleSubmit = async (values: any) => {
   if (response.data.code === 0 && response.data.data) {
     message.success('操作成功')
     await router.push({
-      path: `/space/${spaceId}`,
+      path: `/space/${response.data.data}`,
       replace: true,
     })
   } else {

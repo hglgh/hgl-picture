@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 /**
  * @author 请别把我整破防
+ * @description WebSocket 配置类,定义路径和拦截器
  */
 @Configuration
 @EnableWebSocket

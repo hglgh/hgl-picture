@@ -1,4 +1,4 @@
-package com.hgl.hglpicturebackend.manager.websocket.strategy;
+package com.hgl.hglpicturebackend.manager.websocket.strategy.impl;
 
 
 import com.hgl.hglpicturebackend.exception.BusinessException;
@@ -8,6 +8,7 @@ import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeE
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditRequestMessage;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditResponseMessage;
 import com.hgl.hglpicturebackend.manager.websocket.pictureEditHandler;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageHandleStrategy;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.service.UserService;
 import org.springframework.stereotype.Component;

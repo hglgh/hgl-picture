@@ -81,7 +81,7 @@
         </a-card>
       </a-col>
     </a-row>
-    <ShareModal ref="shareModalRef" :link="shareLink"/>
+    <ShareModal ref="shareModalRef" :link="shareLink" />
   </div>
 </template>
 
@@ -91,7 +91,12 @@ import { message } from 'ant-design-vue'
 import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController'
 import { useRoute, useRouter } from 'vue-router'
 import { downloadImage, formatSize, toHexColor } from '@/utils'
-import { DeleteOutlined, EditOutlined, DownloadOutlined,ShareAltOutlined } from '@ant-design/icons-vue'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  DownloadOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import ShareModal from '@/components/ShareModal.vue'
 import { SPACE_PERMISSION_ENUM } from '@/constants/space'
@@ -123,7 +128,7 @@ const canDelete = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE)
 const fetchPictureDetail = async () => {
   try {
     const response = await getPictureVoByIdUsingGet({
-      id: props.id,
+      id: props.id as any,
     })
     if (response.data.code === 0 && response.data.data) {
       picture.value = response.data.data
@@ -171,7 +176,7 @@ const shareModalRef = ref()
 const shareLink = ref<string>()
 const doShare = () => {
   shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${props.id}`
-  if (shareModalRef.value){
+  if (shareModalRef.value) {
     shareModalRef.value.openModal()
   }
 }

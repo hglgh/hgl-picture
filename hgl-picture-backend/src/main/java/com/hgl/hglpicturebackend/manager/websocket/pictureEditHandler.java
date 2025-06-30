@@ -2,22 +2,21 @@ package com.hgl.hglpicturebackend.manager.websocket;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.hgl.hglpicturebackend.manager.websocket.disruptor.PictureEditEventProducer;
-import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditActionEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditRequestMessage;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditResponseMessage;
-import com.hgl.hglpicturebackend.manager.websocket.strategy.EditActionMessageStrategy;
 import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageHandleStrategy;
 import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageStrategyFactory;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.service.UserService;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -28,7 +27,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -69,10 +67,10 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * 连接建立成功
      *
      * @param session 会话
-     * @throws Exception
+     * @throws Exception 抛出异常
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@NotNull WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         //保存会话到集合中
         User user = (User) session.getAttributes().get("user");
@@ -97,7 +95,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @throws Exception 抛出异常
      */
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(@NotNull WebSocketSession session, @NotNull TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
         //获取消息内容，将消息字符串（json）解析成PictureEditRequestMessage对象
         PictureEditRequestMessage pictureEditRequestMessage = JSONUtil.toBean(message.getPayload(), PictureEditRequestMessage.class);
@@ -117,7 +115,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
      * @throws Exception 抛出异常
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@NotNull WebSocketSession session, @NotNull CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         Map<String, Object> attributes = session.getAttributes();
         Long pictureId = (Long) attributes.get("pictureId");
@@ -235,17 +233,7 @@ public class pictureEditHandler extends TextWebSocketHandler {
     public void broadcastToPicture(Long pictureId, PictureEditResponseMessage pictureEditResponseMessage, WebSocketSession excludeSession) throws Exception {
         Set<WebSocketSession> sessionSet = pictureSessions.get(pictureId);
         if (CollUtil.isNotEmpty(sessionSet)) {
-            // 创建 ObjectMapper
-            ObjectMapper objectMapper = new ObjectMapper();
-            // 配置序列化：将 Long 类型转为 String，解决丢失精度问题
-            SimpleModule module = new SimpleModule();
-            module.addSerializer(Long.class, ToStringSerializer.instance);
-            // 支持 long 基本类型
-            module.addSerializer(Long.TYPE, ToStringSerializer.instance);
-            objectMapper.registerModule(module);
-            // 序列化为 JSON 字符串
-            String message = objectMapper.writeValueAsString(pictureEditResponseMessage);
-            TextMessage textMessage = new TextMessage(message);
+            TextMessage textMessage = getTextMessage(pictureEditResponseMessage);
             for (WebSocketSession session : sessionSet) {
                 // 排除掉的 session 不发送
                 if (excludeSession != null && excludeSession.equals(session)) {
@@ -256,6 +244,21 @@ public class pictureEditHandler extends TextWebSocketHandler {
                 }
             }
         }
+    }
+
+    @NotNull
+    public TextMessage getTextMessage(PictureEditResponseMessage pictureEditResponseMessage) throws JsonProcessingException {
+        // 创建 ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+        // 配置序列化：将 Long 类型转为 String，解决丢失精度问题
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Long.class, ToStringSerializer.instance);
+        // 支持 long 基本类型
+        module.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(module);
+        // 序列化为 JSON 字符串
+        String message = objectMapper.writeValueAsString(pictureEditResponseMessage);
+        return new TextMessage(message);
     }
 
     // 全部广播

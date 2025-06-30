@@ -5,6 +5,7 @@ import com.hgl.hglpicturebackend.manager.websocket.pictureEditHandler;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeEnum;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditRequestMessage;
 import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditResponseMessage;
+import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageHandleStrategy;
 import com.hgl.hglpicturebackend.manager.websocket.strategy.MessageStrategyFactory;
 import com.hgl.hglpicturebackend.model.entity.User;
 import com.hgl.hglpicturebackend.service.UserService;
@@ -26,12 +27,12 @@ import javax.annotation.Resource;
 @Component
 public class PictureEditEventWorkHandler implements WorkHandler<PictureEditEvent> {
 
-    @Resource
+/*    @Resource
     @Lazy
     private pictureEditHandler pictureEditHandler;
 
     @Resource
-    private UserService userService;
+    private UserService userService;*/
 
     @Lazy
     @Resource
@@ -64,6 +65,7 @@ public class PictureEditEventWorkHandler implements WorkHandler<PictureEditEvent
                 pictureEditResponseMessage.setUser(userService.getUserVO(user));
                 session.sendMessage(new TextMessage(JSONUtil.toJsonStr(pictureEditResponseMessage)));
         }*/
-        messageStrategyFactory.getStrategy(type).handle(pictureEditRequestMessage, session, user, pictureId);
+        MessageHandleStrategy strategy = messageStrategyFactory.getStrategy(type);
+        strategy.handle(pictureEditRequestMessage, session, user, pictureId);
     }
 }

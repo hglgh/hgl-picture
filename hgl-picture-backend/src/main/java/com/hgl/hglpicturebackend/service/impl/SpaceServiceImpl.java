@@ -205,6 +205,10 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         // 操作数据库
         boolean result = this.removeById(spaceId);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        List<SpaceUser> spaceUsers = spaceUserService.list(new LambdaQueryWrapper<SpaceUser>().eq(SpaceUser::getSpaceId, spaceId));
+        if (CollUtil.isNotEmpty(spaceUsers)) {
+            spaceUserService.removeBatchByIds(spaceUsers);
+        }
         List<Picture> pictureList = pictureService.list(new LambdaQueryWrapper<Picture>().eq(Picture::getSpaceId, spaceId));
         if (CollUtil.isNotEmpty(pictureList)) {
             pictureService.removeBatchByIds(pictureList);

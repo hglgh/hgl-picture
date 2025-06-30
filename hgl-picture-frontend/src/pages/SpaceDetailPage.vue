@@ -11,7 +11,7 @@
           >+ 创建图片
         </a-button>
         <a-button
-          v-if="canManageSpaceUser"
+          v-if="canManageSpaceUser && SPACE_TYPE_ENUM.TEAM == space.spaceType"
           :icon="h(TeamOutlined)"
           type="primary"
           ghost
@@ -31,8 +31,8 @@
           空间分析
         </a-button>
         <a-button v-if="canEditPicture" :icon="h(EditOutlined)" @click="doBatchEdit">
-          批量编辑</a-button
-        >
+          批量编辑
+        </a-button>
 
         <a-tooltip :title="`占用空间${formatSize(space.totalSize)}/${formatSize(space.maxSize)}`">
           <a-progress
@@ -91,7 +91,7 @@ import 'vue3-colorpicker/style.css'
 import { ColorPicker } from 'vue3-colorpicker'
 import BatchEditPictureModal from '@/components/BatchEditPictureModal.vue'
 import { EditOutlined, BarChartOutlined, TeamOutlined } from '@ant-design/icons-vue'
-import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '@/constants/space'
+import { SPACE_PERMISSION_ENUM, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constants/space'
 
 interface Props {
   id: string | number

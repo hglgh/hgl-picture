@@ -122,9 +122,8 @@ const doDelete = async (id: string) => {
   if (!id) {
     return
   }
-  const idNumber = Number(id)
   const res = await deleteSpaceUserUsingPost({
-    id: idNumber,
+    id,
     spaceId: props.id as any,
   })
   if (res.data.code === 0 && res.data.data) {
@@ -153,9 +152,8 @@ const handleSubmit = async () => {
   if (!spaceId) {
     return
   }
-  const spaceNumber = Number(spaceId)
   const respone = await addSpaceUserUsingPost({
-    spaceId: spaceNumber,
+    spaceId,
     ...formData,
   })
   if (respone.data.code === 0) {

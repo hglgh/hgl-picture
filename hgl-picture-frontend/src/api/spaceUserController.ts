@@ -19,7 +19,7 @@ export async function addSpaceUserUsingPost(
 
 /** deleteSpaceUser POST /hgl/spaceUser/delete */
 export async function deleteSpaceUserUsingPost(
-  body: API.DeleteRequest,
+  body: API.SpaceUserDeleteRequest,
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean_>('/hgl/spaceUser/delete', {

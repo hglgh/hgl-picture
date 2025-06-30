@@ -592,8 +592,14 @@ declare namespace API {
     period?: string
   }
 
+  type SpaceUserDeleteRequest = {
+    id?: number
+    spaceId?: number
+  }
+
   type SpaceUserEditRequest = {
     id?: number
+    spaceId?: number
     spaceRole?: string
   }
 

@@ -122,7 +122,8 @@ public class DynamicShardingManager {
             // 创建分表
             String tableName = LOGIC_TABLE_NAME + "_" + space.getId();
             // 创建分表 SQL
-            String createTableSql = "CREATE TABLE IF NOT EXISTS `" + tableName + "` LIKE `" + LOGIC_TABLE_NAME + "`";
+            String createTableSql = String.format("CREATE TABLE IF NOT EXISTS `%s` LIKE `%s`", tableName, LOGIC_TABLE_NAME);
+//            String createTableSql = "CREATE TABLE IF NOT EXISTS `" + tableName + "` LIKE `" + LOGIC_TABLE_NAME + "`";
             try {
                 SqlRunner.db().update(createTableSql);
                 // 更新 actual-data-nodes(分表)

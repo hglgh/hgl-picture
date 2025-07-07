@@ -63,6 +63,26 @@ spring:
     store-type: redis
     # session 30 天过期
     timeout: 2592000
+  mail:
+    host: ${email.host}
+    port: ${email.port}
+    nickname:  江离云图库
+    username: ${email.username}
+    password: ${email.password}
+    protocol: ${email.protocol}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          socketFactory:
+            port: ${email.port}
+            class: javax.net.ssl.SSLSocketFactory
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false # 开启驼峰命名
@@ -70,11 +90,12 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印sql
   # 全局配置
   global-config:
+    enable-sql-runner: true # 开启sql运行器
     db-config:
       logic-delete-field: isDeleted # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
-    enable-sql-runner: true # 开启sql运行器
+
 knife4j:
   enable: true
   openapi:

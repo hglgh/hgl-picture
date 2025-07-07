@@ -23,7 +23,6 @@ import com.hgl.hglpicturebackend.manager.auth.SpaceUserAuthManager;
 import com.hgl.hglpicturebackend.manager.auth.StpKit;
 import com.hgl.hglpicturebackend.manager.auth.annotation.SaSpaceCheckPermission;
 import com.hgl.hglpicturebackend.manager.auth.constant.SpaceUserPermissionConstant;
-import com.hgl.hglpicturebackend.manager.auth.context.SpaceUserAuthContext;
 import com.hgl.hglpicturebackend.model.constant.UserConstant;
 import com.hgl.hglpicturebackend.model.dto.picture.*;
 import com.hgl.hglpicturebackend.model.entity.Picture;
@@ -77,19 +76,21 @@ public class PictureController {
     private AliYunAiApi aliYunAiApi;
 
     @Resource
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
-    private final Cache<String,String> LOCAL_CACHE = Caffeine.newBuilder()
+    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
             .initialCapacity(1024)
             .maximumSize(10000L)
             // 缓存 5 分钟移除
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
+
     /**
      * 上传图片
-     * @param multipartFile 文件
+     *
+     * @param multipartFile        文件
      * @param pictureUploadRequest 上传图片请求体
-     * @param request 请求
+     * @param request              请求
      * @return
      */
 //    @AuthCheck(mustRole = "admin")
@@ -103,8 +104,9 @@ public class PictureController {
 
     /**
      * 通过URL上传图片
+     *
      * @param pictureUploadRequest 上传图片请求体
-     * @param request 请求
+     * @param request              请求
      * @return
      */
     @PostMapping("/upload/url")
@@ -241,7 +243,7 @@ public class PictureController {
             pictureQueryRequest.setNullSpaceId(true);
             // 普通用户默认只能查看已过审的数据
             pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
-        }else {
+        } else {
             boolean hasPermission = StpKit.SPACE.hasPermission(SpaceUserPermissionConstant.PICTURE_VIEW);
             ThrowUtils.throwIf(!hasPermission, ErrorCode.NO_AUTH_ERROR);
             //私有空间
@@ -298,7 +300,7 @@ public class PictureController {
         //写回本地缓存中
         LOCAL_CACHE.put(cacheKey, JSONUtil.toJsonStr(picturePage));
         //写回redis缓存中
-        int cacheExpireTime = 500 + RandomUtil.randomInt(0,500);
+        int cacheExpireTime = 500 + RandomUtil.randomInt(0, 500);
         redisTemplate.opsForValue().set(cacheKey, JSONUtil.toJsonStr(picturePage), cacheExpireTime, TimeUnit.SECONDS);
         // 获取封装类
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
@@ -339,6 +341,7 @@ public class PictureController {
 
     /**
      * 获取标签和分类
+     *
      * @return
      */
     @GetMapping("/tag_category")
@@ -353,8 +356,9 @@ public class PictureController {
 
     /**
      * 图片审核
+     *
      * @param pictureReviewRequest 审核请求
-     * @param request 请求
+     * @param request              请求
      * @return
      */
     @PostMapping("/review")
@@ -372,8 +376,9 @@ public class PictureController {
 
     /**
      * 批量上传图片
+     *
      * @param pictureUploadByBatchRequest 上传图片请求
-     * @param request 请求
+     * @param request                     请求
      * @return
      */
     @PostMapping("/upload/batch")
@@ -416,9 +421,8 @@ public class PictureController {
     }
 
     /**
-     *
      * @param searchPictureByColorRequest 根据颜色搜索图片
-     * @param request 请求
+     * @param request                     请求
      * @return
      */
     @PostMapping("/search/color")

@@ -68,14 +68,17 @@
                 <DownloadOutlined />
               </template>
             </a-button>
-            <a-button :icon="h(ShareAltOutlined)" type="primary" @click="doShare" ghost
-              >分享
+            <a-button v-if="canEdit" :icon="h(SearchOutlined)" type="primary" @click="doSearch" ghost>
+              搜索
             </a-button>
-            <a-button v-if="canEdit" :icon="h(EditOutlined)" type="default" @click="doEdit"
-              >编辑
+            <a-button :icon="h(ShareAltOutlined)" type="primary" @click="doShare" ghost>
+              分享
             </a-button>
-            <a-button v-if="canDelete" :icon="h(DeleteOutlined)" danger @click="doDelete"
-              >删除
+            <a-button v-if="canEdit" :icon="h(EditOutlined)" type="default" @click="doEdit">
+              编辑
+            </a-button>
+            <a-button v-if="canDelete" :icon="h(DeleteOutlined)" danger @click="doDelete">
+              删除
             </a-button>
           </a-space>
         </a-card>
@@ -96,6 +99,7 @@ import {
   EditOutlined,
   DownloadOutlined,
   ShareAltOutlined,
+  SearchOutlined,
 } from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import ShareModal from '@/components/ShareModal.vue'
@@ -170,6 +174,12 @@ const doEdit = () => {
 const doDownload = () => {
   downloadImage(picture.value.url)
 }
+
+const doSearch = () => {
+  //打开新窗口
+  window.open(`/search_picture?pictureId=${props.id}`)
+}
+
 // 分享
 const shareModalRef = ref()
 // 分享链接

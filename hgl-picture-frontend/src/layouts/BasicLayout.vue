@@ -11,7 +11,7 @@
         </a-layout-content>
       </a-layout>
       <a-layout-footer class="footer">
-        <a href="https://www.codefather.cn" target="_blank">
+        <a href="https://github.com/hglgh" target="_blank">
           小扈严选 by 请别把我整破防
         </a>
       </a-layout-footer>

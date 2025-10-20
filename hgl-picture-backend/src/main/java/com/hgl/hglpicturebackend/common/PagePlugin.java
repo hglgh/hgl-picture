@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
  * @Date: 2025/3/26 10:03
  * @Author: SH
  */
-@Component
+//@Component
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PagePlugin implements Interceptor {
 	

@@ -5,6 +5,8 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hgl.hglpicturebackend.manager.auth.SpaceUserAuthManager;
 import com.hgl.hglpicturebackend.manager.auth.constant.SpaceUserPermissionConstant;
+import com.hgl.hglpicturebackend.manager.websocket.validator.HandshakeValidator;
+import com.hgl.hglpicturebackend.manager.websocket.validator.HandshakeValidatorFactory;
 import com.hgl.hglpicturebackend.model.entity.Picture;
 import com.hgl.hglpicturebackend.model.entity.Space;
 import com.hgl.hglpicturebackend.model.entity.User;
@@ -13,6 +15,7 @@ import com.hgl.hglpicturebackend.service.PictureService;
 import com.hgl.hglpicturebackend.service.SpaceService;
 import com.hgl.hglpicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -39,6 +42,10 @@ import java.util.Map;
 public class WsHandshakeInterceptor implements HandshakeInterceptor {
 
     @Resource
+    private HandshakeValidatorFactory handshakeValidatorFactory;
+
+    // region  未使用责任链版本
+/*    @Resource
     private UserService userService;
 
     @Resource
@@ -50,17 +57,17 @@ public class WsHandshakeInterceptor implements HandshakeInterceptor {
     @Resource
     private SpaceUserAuthManager spaceUserAuthManager;
 
-    /**
+    *//**
      * 握手前校验权限
-     * @param request 请求
-     * @param response 响应
-     * @param wsHandler 处理器
+     *
+     * @param request    请求
+     * @param response   响应
+     * @param wsHandler  处理器
      * @param attributes 给WebSocketSession会话设置属性
      * @return boolean
-     * @throws Exception 抛出异常
-     */
+     *//*
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(@NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response, @NotNull WebSocketHandler wsHandler, @NotNull Map<String, Object> attributes) {
         //获取到当前用户
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
@@ -108,10 +115,46 @@ public class WsHandshakeInterceptor implements HandshakeInterceptor {
             return true;
         }
         return false;
+    }*/
+// endregion
+
+    /**
+     * 握手前校验权限
+     *
+     * @param request    请求
+     * @param response   响应
+     * @param wsHandler  处理器
+     * @param attributes 给WebSocketSession会话设置属性
+     * @return boolean
+     */
+    @Override
+    public boolean beforeHandshake(@NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response, @NotNull WebSocketHandler wsHandler, @NotNull Map<String, Object> attributes){
+        if (request instanceof ServletServerHttpRequest) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
+
+            // 使用责任链进行权限校验
+            HandshakeValidator validatorChain = handshakeValidatorFactory.getValidatorChain();
+            if (validatorChain != null) {
+                return validatorChain.validate(httpServletRequest, attributes);
+            } else {
+                log.error("WebSocket握手校验器链未初始化或为空");
+                return false;
+            }
+        }
+        return false;
     }
 
+    /**
+     * 握手后
+     *
+     * @param request   请求
+     * @param response  响应
+     * @param wsHandler 处理器
+     * @param exception 异常
+     */
     @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+    public void afterHandshake(@NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response, @NotNull WebSocketHandler wsHandler, Exception exception) {
 
     }
 }

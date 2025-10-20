@@ -42,6 +42,7 @@ public class AliYunAiApi {
      */
     public CreateOutPaintingTaskResponse createOutPaintingTask(CreateOutPaintingTaskRequest createOutPaintingTaskRequest) {
         if (createOutPaintingTaskRequest == null) {
+            log.error("请求参数为空");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "扩图参数为空");
         }
         HttpRequest httpRequest = HttpRequest.post(OUT_PAINTING_URL)

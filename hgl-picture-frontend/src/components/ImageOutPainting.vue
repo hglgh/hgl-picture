@@ -26,9 +26,7 @@
       <a-button type="primary" ghost @click="createTask">生成图片</a-button>
       <a-button type="primary" @click="handleUpload">应用结果</a-button>
     </a-flex>
-
   </a-modal>
-
 </template>
 
 <script setup lang="ts">
@@ -36,7 +34,7 @@ import { onUnmounted, ref } from 'vue'
 import {
   createPictureOutPaintingTaskUsingPost,
   getPictureOutPaintingTaskUsingGet,
-  uploadPictureByUrlUsingPost
+  uploadPictureByUrlUsingPost,
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 
@@ -87,8 +85,8 @@ const createTask = async () => {
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('创建任务成功，请耐心等待，不要退出界面')
-    console.log(res.data.data.output.taskId)
-    taskId.value = res.data.data.output.taskId
+    console.log(res.data.data.output?.taskId)
+    taskId.value = res.data.data.output?.taskId
     // 开启轮询
     startPolling()
   } else {
@@ -103,7 +101,7 @@ const clearPolling = () => {
   if (pollingTimer) {
     clearInterval(pollingTimer)
     pollingTimer = null
-    taskId.value = null
+    taskId.value = ''
   }
 }
 
@@ -118,11 +116,11 @@ const startPolling = () => {
       })
       if (res.data.code === 0 && res.data.data) {
         const taskResult = res.data.data.output
-        if (taskResult.taskStatus === 'SUCCEEDED') {
+        if (taskResult?.taskStatus === 'SUCCEEDED') {
           message.success('扩图任务成功')
           resultImageUrl.value = taskResult.outputImageUrl
           clearPolling()
-        } else if (taskResult.taskStatus === 'FAILED') {
+        } else if (taskResult?.taskStatus === 'FAILED') {
           message.error('扩图任务失败')
           clearPolling()
         }
@@ -167,7 +165,6 @@ const handleUpload = async () => {
     uploadLoading.value = false
   }
 }
-
 </script>
 
 <style scoped>

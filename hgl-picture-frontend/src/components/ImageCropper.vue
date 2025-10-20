@@ -61,7 +61,7 @@ const props = defineProps<Props>()
 const loading = ref<boolean>(false)
 // 是否为团队空间
 const isTeamSpace = computed(() => {
-  return props.space?.spaceType === SPACE_TYPE_ENUM.TEAM;
+  return props.space?.spaceType === SPACE_TYPE_ENUM.TEAM
 })
 
 // 编辑器组件的引用

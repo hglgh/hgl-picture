@@ -39,7 +39,6 @@ import { reactive } from 'vue'
 import { userLoginUsingPost, userRegisterUsingPost } from '@/api/yonghujiekou'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import { message } from 'ant-design-vue'
-import Router from '@/router'
 import router from '@/router'
 
 /**
@@ -68,14 +67,14 @@ const handleSubmit = async (values: any) => {
     // 注册成功,跳转到登录页了
     if (result.data.code === 0 && result.data.data) {
       message.success('注册成功')
-      router.push({
+      await router.push({
         path: '/user/lgoin',
         replace: true,
       })
     } else {
       message.error('注册失败' + result.data.message)
     }
-  } catch (e) {
+  } catch (e: any) {
     message.error('注册失败' + e.message)
   }
 }

@@ -29,6 +29,14 @@ public class ErrorMessageStrategy implements MessageHandleStrategy {
     @Resource
     private UserService userService;
 
+    /**
+     * 处理错误消息
+     *
+     * @param pictureEditRequestMessage 消息
+     * @param session                   会话
+     * @param user                      用户
+     * @param pictureId                 图片id
+     */
     @Override
     public void handle(PictureEditRequestMessage pictureEditRequestMessage, WebSocketSession session, User user, Long pictureId) {
         PictureEditResponseMessage pictureEditResponseMessage = new PictureEditResponseMessage();

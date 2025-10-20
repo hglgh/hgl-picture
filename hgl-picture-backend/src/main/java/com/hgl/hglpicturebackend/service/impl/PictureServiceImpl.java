@@ -62,10 +62,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
-/*
-    @Resource
-    private FileManager fileManager;
- */
 
     @Resource
     private FilePictureUpload filePictureUpload;
@@ -123,7 +119,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 spaceId = oldPicture.getSpaceId();
             }
             //如果传来的spaceId和原来的不一致，则抛出异常
-            ThrowUtils.throwIf(!ObjUtil.equals(oldPicture.getSpaceId(),spaceId), ErrorCode.PARAMS_ERROR, "空间不一致");
+            ThrowUtils.throwIf(!ObjUtil.equals(oldPicture.getSpaceId(), spaceId), ErrorCode.PARAMS_ERROR, "空间不一致");
         }
         //上传图片,获取图片信息
         //按照用户id划分目录
@@ -314,9 +310,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         //判断图片是否存在
         Picture oldPicture = this.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
-        //判断老图片状态是否已经为待审核
+        //已是该状态
         if (oldPicture.getReviewStatus().equals(reviewStatus)) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "图片状态已经为待审核");
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "请勿重复审核");
         }
         Picture picture = new Picture();
         BeanUtil.copyProperties(pictureReviewRequest, picture);
@@ -567,8 +563,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 根据名称规则修改图片名称
+     *
      * @param pictureList 图片列表
-     * @param nameRule 名称规则
+     * @param nameRule    名称规则
      */
     private void fillPictureWithNameRule(List<Picture> pictureList, String nameRule) {
         long count = 1;

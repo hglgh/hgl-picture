@@ -65,9 +65,9 @@ public abstract class PictureUploadTemplate {
      * @param uploadPathPrefix 上传路径前缀
      */
     public <T> UploadPictureResult uploadPicture(T inputSource, String uploadPathPrefix) {
-        //1.校验图片TODO
+        //1.校验图片
         validPicture(inputSource);
-        //2.图片上传地址TODO
+        //2.图片上传地址
         String originalFilename = getOriginalFilename(inputSource);
         String uuid = RandomUtil.randomString(16);
         //自己拼接文件上传文件名称，而不是使用原始文件名
@@ -78,7 +78,7 @@ public abstract class PictureUploadTemplate {
             //3、上传文件
             // 3.1创建临时文件
             file = File.createTempFile(uploadPath, null);
-            // 3.2处理文件来源 TODO
+            // 3.2处理文件来源
             processFile(inputSource, file);
             //3.3 上传文件到COS
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadPath, file);
@@ -88,14 +88,14 @@ public abstract class PictureUploadTemplate {
             //获取图片处理结果
             ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults();
             List<CIObject> objectList = processResults.getObjectList();
-            if (CollUtil.isNotEmpty(objectList)){
+            if (CollUtil.isNotEmpty(objectList)) {
                 CIObject compressedCiObject = objectList.get(0);
                 //封装缩略图返回结果
                 CIObject thumbnailCiObject = compressedCiObject;
-                if (objectList.size() > 1){
+                if (objectList.size() > 1) {
                     thumbnailCiObject = objectList.get(1);
                 }
-                return buildResult(originalFilename, compressedCiObject, thumbnailCiObject,imageInfo);
+                return buildResult(originalFilename, compressedCiObject, thumbnailCiObject, imageInfo);
             }
             //封装原图返回结果
             return buildResult(imageInfo, uploadPath, originalFilename, file);
@@ -126,11 +126,12 @@ public abstract class PictureUploadTemplate {
 
     /**
      * 构建上传结果
-     * @param imageInfo 对象存储返回的图片信息
-     * @param uploadPath 上传路径
+     *
+     * @param imageInfo        对象存储返回的图片信息
+     * @param uploadPath       上传路径
      * @param originalFilename 原始文件名
-     * @param file 本地文件
-     * @return
+     * @param file             本地文件
+     * @return 上传结果
      */
     private UploadPictureResult buildResult(ImageInfo imageInfo, String uploadPath, String originalFilename, File file) {
         String format = imageInfo.getFormat();
@@ -154,10 +155,11 @@ public abstract class PictureUploadTemplate {
 
     /**
      * 构建上传结果
-     * @param originalFilename 原始文件名
+     *
+     * @param originalFilename   原始文件名
      * @param compressedCiObject 压缩后的图片对象
-     * @param thumbnailCiObject 缩略图对象
-     * @param imageInfo 图片信息
+     * @param thumbnailCiObject  缩略图对象
+     * @param imageInfo          图片信息
      * @return 上传结果
      */
     private UploadPictureResult buildResult(String originalFilename, CIObject compressedCiObject, CIObject thumbnailCiObject, ImageInfo imageInfo) {

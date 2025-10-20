@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.hgl.hglpicturebackend.common.ResultUtils;
 import com.hgl.hglpicturebackend.config.CosClientConfig;
 import com.hgl.hglpicturebackend.exception.BusinessException;
 import com.hgl.hglpicturebackend.exception.ErrorCode;
@@ -12,19 +11,15 @@ import com.hgl.hglpicturebackend.exception.ThrowUtils;
 import com.hgl.hglpicturebackend.model.dto.file.UploadPictureResult;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
-import com.qcloud.cos.model.ciModel.persistence.OriginalInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * ClassName: CosManager
@@ -33,12 +28,7 @@ import java.util.UUID;
  *
  * @Author HGL
  * @Create: 2024/12/28 11:37
- */
-
-/**
- * 文件管理类
- * @author 请别把我整破防
- * @Deprecated 废弃,改为使用 upload 包的模板方法优化
+ * @Deprecated 废弃, 改为使用 upload 包的模板方法优化
  */
 @Slf4j
 @Service

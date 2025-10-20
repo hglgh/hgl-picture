@@ -30,7 +30,6 @@ import { reactive } from 'vue'
 import { userLoginUsingPost } from '@/api/yonghujiekou'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import { message } from 'ant-design-vue'
-import Router from '@/router'
 import router from '@/router'
 
 /**
@@ -55,14 +54,14 @@ const handleSubmit = async (values: any) => {
       // userLoginStore.setLoginUser(result.data.data)
       await userLoginStore.fetchLoginUser()
       message.success('登录成功')
-      router.push({
+      await router.push({
         path: '/',
         replace: true,
       })
     } else {
       message.error('登录失败' + result.data.message)
     }
-  } catch (e) {
+  } catch (e: any) {
     message.error('登录失败' + e.message)
   }
 }

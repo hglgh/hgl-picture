@@ -5,15 +5,10 @@ import lombok.Data;
 /**
  * ClassName: UploadPictureResult
  * Package: com.hgl.hglpicturebackend.model.dto.file
- * Description:
+ * Description:上传图片的结果
  *
  * @Author HGL
  * @Create: 2024/12/28 15:33
- */
-
-/**
- * 上传图片的结果
- * @author 请别把我整破防
  */
 @Data
 public class UploadPictureResult {

@@ -62,6 +62,15 @@ public class EditActionMessageStrategy implements MessageHandleStrategy {
         }
     }
 
+    /**
+     * 构建图片编辑动作消息
+     *
+     * @param user                  用户
+     * @param pictureEditActionEnum 图片编辑动作枚举
+     * @param userService           用户服务
+     * @param editAction            编辑动作
+     * @return 图片编辑动作消息
+     */
     private PictureEditResponseMessage buildPictureEditResponseMessage(User user, PictureEditActionEnum pictureEditActionEnum, UserService userService, String editAction) {
         PictureEditResponseMessage pictureEditResponseMessage = new PictureEditResponseMessage();
         pictureEditResponseMessage.setType(PictureEditMessageTypeEnum.EDIT_ACTION.getValue());

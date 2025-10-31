@@ -42,7 +42,8 @@ import static com.hgl.hglpicturebackend.model.constant.UserConstant.USER_LOGIN_S
  *
  * @author 请别把我整破防
  */
-@Component    // 保证此类被 SpringBoot 扫描，完成 Sa-Token 的自定义权限验证扩展
+@Deprecated
+//@Component    // 保证此类被 SpringBoot 扫描，完成 Sa-Token 的自定义权限验证扩展
 public class TuneStpInterfaceImpl implements StpInterface {
 
     @Value("${server.servlet.context-path}")

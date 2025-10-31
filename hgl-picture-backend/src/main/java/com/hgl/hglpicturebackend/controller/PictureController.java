@@ -91,7 +91,7 @@ public class PictureController {
      * @param multipartFile        文件
      * @param pictureUploadRequest 上传图片请求体
      * @param request              请求
-     * @return
+     * @return 图片信息
      */
 //    @AuthCheck(mustRole = "admin")
     @PostMapping("/upload")
@@ -107,7 +107,7 @@ public class PictureController {
      *
      * @param pictureUploadRequest 上传图片请求体
      * @param request              请求
-     * @return
+     * @return 图片信息
      */
     @PostMapping("/upload/url")
     @SaSpaceCheckPermission(SpaceUserPermissionConstant.PICTURE_UPLOAD)
@@ -342,7 +342,7 @@ public class PictureController {
     /**
      * 获取标签和分类
      *
-     * @return
+     * @return {@link PictureTagCategory} 获取标签和分类
      */
     @GetMapping("/tag_category")
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
@@ -359,7 +359,7 @@ public class PictureController {
      *
      * @param pictureReviewRequest 审核请求
      * @param request              请求
-     * @return
+     * @return 响应
      */
     @PostMapping("/review")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -379,7 +379,7 @@ public class PictureController {
      *
      * @param pictureUploadByBatchRequest 上传图片请求
      * @param request                     请求
-     * @return
+     * @return 响应
      */
     @PostMapping("/upload/batch")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)

@@ -105,33 +105,72 @@ const clearPolling = () => {
   }
 }
 
-// 开始轮询
+/**
+ * 开始轮询任务状态
+ */
 const startPolling = () => {
   if (!taskId.value) return
 
-  pollingTimer = setInterval(async () => {
-    try {
-      const res = await getPictureOutPaintingTaskUsingGet({
-        taskId: taskId.value,
-      })
-      if (res.data.code === 0 && res.data.data) {
-        const taskResult = res.data.data.output
-        if (taskResult?.taskStatus === 'SUCCEEDED') {
-          message.success('扩图任务成功')
-          resultImageUrl.value = taskResult.outputImageUrl
-          clearPolling()
-        } else if (taskResult?.taskStatus === 'FAILED') {
-          message.error('扩图任务失败')
-          clearPolling()
-        }
-      }
-    } catch (error) {
-      console.error('轮询任务状态失败', error)
-      message.error('检测任务状态失败，请稍后重试')
-      clearPolling()
-    }
-  }, 3000) // 每隔 3 秒轮询一次
+  pollingTimer = setInterval(checkTaskStatus, 3000)
 }
+
+
+/**
+ * 轮询任务状态检查
+ */
+const checkTaskStatus = async () => {
+  try {
+    const res = await getPictureOutPaintingTaskUsingGet({
+      taskId: taskId.value,
+    })
+    handleTaskResponse(res)
+  } catch (error) {
+    handlePollingError(error)
+  }
+}
+
+/**
+ * 处理任务响应结果
+ */
+const handleTaskResponse = (res: any) => {
+  if (res.data.code !== 0 || !res.data.data) {
+    return
+  }
+
+  const taskResult = res.data.data.output
+  if (taskResult?.taskStatus === 'SUCCEEDED') {
+    handleTaskSuccess(taskResult)
+  } else if (taskResult?.taskStatus === 'FAILED') {
+    handleTaskFailure()
+  }
+}
+
+/**
+ * 处理任务成功
+ */
+const handleTaskSuccess = (taskResult: any) => {
+  message.success('扩图任务成功')
+  resultImageUrl.value = taskResult.outputImageUrl
+  clearPolling()
+}
+
+/**
+ * 处理任务失败
+ */
+const handleTaskFailure = () => {
+  message.error('扩图任务失败')
+  clearPolling()
+}
+
+/**
+ * 处理轮询错误
+ */
+const handlePollingError = (error: any) => {
+  console.error('轮询任务状态失败', error)
+  message.error('检测任务状态失败，请稍后重试')
+  clearPolling()
+}
+
 
 // 清理定时器，避免内存泄漏
 onUnmounted(() => {

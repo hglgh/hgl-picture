@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @ClassName: HandshakeValidatorFactory
  * @Package: com.hgl.hglpicturebackend.manager.websocket.validator
- * @Description: WebSocket握手校验器工厂类 ;负责组装所有校验器形成责任链
+ * @Description: WebSocket握手校验器工厂类;负责组装所有校验器形成责任链
  * @Author HGL
  * @Create: 2025/10/20 10:34
  */
@@ -38,7 +38,7 @@ public class HandshakeValidatorFactory {
             validatorChain = null;
             return;
         }
-// 1. 先排序
+        // 1. 先排序
         List<HandshakeValidator> sortedValidators = validators.stream()
                 .sorted(Comparator.comparingInt(HandshakeValidator::getOrder))
                 .collect(Collectors.toList());

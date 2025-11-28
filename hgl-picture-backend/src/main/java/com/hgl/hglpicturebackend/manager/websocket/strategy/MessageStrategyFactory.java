@@ -1,6 +1,7 @@
 package com.hgl.hglpicturebackend.manager.websocket.strategy;
 
 
+import com.hgl.hglpicturebackend.manager.websocket.model.PictureEditMessageTypeEnum;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ public class MessageStrategyFactory {
 
     public MessageHandleStrategy getStrategy(String type) {
         if (type == null) {
-            return strategyMap.get("ERROR");
+            return strategyMap.get(PictureEditMessageTypeEnum.ERROR.getValue());
         }
         if (strategyMap.get(type) == null) {
             throw new RuntimeException("未找到对应的策略");

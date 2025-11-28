@@ -66,7 +66,7 @@ defineExpose({
 
 const resultImageUrl = ref<string>()
 // 任务 id
-let taskId = ref<string>()
+const taskId = ref<string>()
 
 /**
  * 创建任务

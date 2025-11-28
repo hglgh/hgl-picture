@@ -2,6 +2,7 @@ package com.hgl.hglpicturebackend.manager.auth.permission;
 
 import com.hgl.hglpicturebackend.manager.auth.context.SpaceUserAuthContext;
 import com.hgl.hglpicturebackend.model.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import java.util.List;
  * @Author HGL
  * @Create: 2025/10/31 10:12
  */
+@Slf4j
 @Component
 public class PermissionHandlerManager {
 
@@ -27,6 +29,7 @@ public class PermissionHandlerManager {
     public void init() {
         // 按优先级排序
         permissionHandlers.sort(Comparator.comparingInt(PermissionHandler::getPriority));
+        log.info("初始化权限处理器成功！");
     }
 
     public List<String> handlePermission(Object loginId, User loginUser, SpaceUserAuthContext authContext) {

@@ -46,14 +46,9 @@ public class HandshakeValidatorFactory {
         // 2. 构建链条
         // 头节点
         this.validatorChain = sortedValidators.get(0);
-        // 用于移动的指针，初始指向头
-        HandshakeValidator current = this.validatorChain;
-        for (int i = 1; i < sortedValidators.size(); i++) {
-            HandshakeValidator next = sortedValidators.get(i);
-            // 将当前节点的下一个设置为新节点
-            current.setNext(next);
-            // 指针向后移动
-            current = next;
+        // 构建责任链
+        for (int i = 0; i < sortedValidators.size() - 1; i++) {
+            sortedValidators.get(i).setNext(sortedValidators.get(i + 1));
         }
         log.info("初始化WebSocket握手校验器责任链成功！链头: {}", validatorChain.getClass().getSimpleName());
     }

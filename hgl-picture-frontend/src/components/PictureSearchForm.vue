@@ -81,11 +81,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { listPictureTagCategoryUsingGet, searchPictureByColorUsingPost } from '@/api/pictureController'
-import { ColorPicker } from 'vue3-colorpicker'
+import { listPictureTagCategoryUsingGet } from '@/api/pictureController'
 
 //====================================argument Start====================================
 interface Props {

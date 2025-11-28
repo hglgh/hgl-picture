@@ -24,21 +24,19 @@
         />
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" style="width: 100%" :loading="loading">执行任务</a-button>
+        <a-button type="primary" html-type="submit" style="width: 100%" :loading="loading"
+          >执行任务</a-button
+        >
       </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import {
-  editPictureUsingPost,
-  getPictureVoByIdUsingGet,
-  listPictureTagCategoryUsingGet, uploadPictureByBatchUsingPost
-} from '@/api/pictureController'
+import { ref } from 'vue'
+import { uploadPictureByBatchUsingPost } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const formData = ref<API.PictureUploadByBatchRequest>({
   count: 10,

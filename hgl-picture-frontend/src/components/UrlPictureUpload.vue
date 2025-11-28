@@ -1,8 +1,14 @@
 <template>
   <div class="url-picture-upload">
     <a-input-group compact>
-      <a-input v-model:value="fileUrl" style="width: calc(100% - 120px)" placeholder="请输入图片地址" />
-      <a-button type="primary" style="width: 120px" :loading="loading" @click="handleUpload">提交</a-button>
+      <a-input
+        v-model:value="fileUrl"
+        style="width: calc(100% - 120px)"
+        placeholder="请输入图片地址"
+      />
+      <a-button type="primary" style="width: 120px" :loading="loading" @click="handleUpload"
+        >提交</a-button
+      >
     </a-input-group>
     <div class="img-wrapper">
       <img v-if="picture?.url" :src="picture?.url" alt="avatar" />
@@ -12,10 +18,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
-import type { UploadChangeParam, UploadProps } from 'ant-design-vue'
-import { uploadPictureByUrlUsingPost, uploadPictureUsingPost } from '@/api/pictureController'
+import { uploadPictureByUrlUsingPost } from '@/api/pictureController'
 
 interface Props {
   picture?: API.PictureVO
@@ -35,9 +39,9 @@ const fileUrl = ref<string>()
 const handleUpload = async () => {
   loading.value = true
   try {
-    const params: API.PictureUploadRequest = {fileUrl: fileUrl.value}
+    const params: API.PictureUploadRequest = { fileUrl: fileUrl.value }
     params.spaceId = props.spaceId
-    if (props.picture){
+    if (props.picture) {
       params.id = props.picture.id
     }
     const response = await uploadPictureByUrlUsingPost(params)
@@ -55,12 +59,11 @@ const handleUpload = async () => {
 }
 
 const loading = ref<boolean>(false)
-
 </script>
 
 <style scoped>
 .url-picture-upload {
-margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 .url-picture-upload img {
   max-width: 100%;

@@ -169,11 +169,11 @@ public class pictureEditHandler extends TextWebSocketHandler {
         // 创建 ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
         // 配置序列化：将 Long 类型转为 String，解决丢失精度问题
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Long.class, ToStringSerializer.instance);
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         // 支持 long 基本类型
-        module.addSerializer(Long.TYPE, ToStringSerializer.instance);
-        objectMapper.registerModule(module);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
         // 序列化为 JSON 字符串
         String message = objectMapper.writeValueAsString(pictureEditResponseMessage);
         return new TextMessage(message);

@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 /**
@@ -20,6 +19,7 @@ public class HglPictureBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(HglPictureBackendApplication.class, args);
+        System.out.println("启动成功");
     }
 
 }

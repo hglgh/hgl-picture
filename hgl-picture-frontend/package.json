@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^4.2.6",
-    "axios": "^1.7.9",
+    "axios": "1.12.0",
     "echarts": "^5.6.0",
     "echarts-wordcloud": "^2.1.0",
     "file-saver": "^2.0.5",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "^22.9.0",
+    "@types/node": "^22.19.0",
     "@umijs/openapi": "^1.13.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/eslint-config-prettier": "^10.1.0",
@@ -41,7 +41,7 @@
     "npm-run-all2": "^7.0.1",
     "prettier": "^3.3.3",
     "typescript": "~5.6.3",
-    "vite": "^5.4.10",
+    "vite": "7.1.11",
     "vite-plugin-vue-devtools": "^7.5.4",
     "vue-tsc": "^2.1.10"
   }

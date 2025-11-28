@@ -55,7 +55,7 @@ public class RequestAspect {
         log.info(BLUE + "↓↓↓↓↓↓↓↓↓↓ 请求日志 ↓↓↓↓↓↓↓↓↓↓" + RESET);
         log.info(GREEN + "请求接口: [{}] {}" + RESET, request.getMethod(), request.getRequestURI());
         log.info(YELLOW + "请求方法: {}.{}" + RESET, joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName());
-        log.info(RED + "请求参数: {}" + RESET, JSONUtil.toJsonStr(filterArgs(joinPoint.getArgs())));
+        log.info(RED + "请求参数: {}" + RESET, JSONUtil.toJsonStr(processAndFilterArgs(joinPoint.getArgs())));
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -76,7 +76,7 @@ public class RequestAspect {
      * @param args 原始参数数组
      * @return 处理后的参数数组
      */
-    private Object filterArgs(Object[] args) {
+    private Object processAndFilterArgs(Object[] args) {
         return Arrays.stream(args).filter(arg ->
                         !(arg instanceof MultipartFile)
                                 && !(arg instanceof HttpServletResponse)
@@ -167,7 +167,7 @@ public class RequestAspect {
     private Object desensitizeOtherObject(Object obj) {
         try {
             String jsonStr = JSONUtil.toJsonStr(obj);
-            Map<String, Object> map = JSONUtil.toBean(jsonStr, Map.class);
+            Map<String, Object> map = JSONUtil.toBean(jsonStr, Map.class,false);
             return desensitizeObject(map);
         } catch (Exception e) {
             return obj;

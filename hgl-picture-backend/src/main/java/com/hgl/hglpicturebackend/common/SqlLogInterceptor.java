@@ -33,21 +33,6 @@ import java.util.regex.Matcher;
 })
 public class SqlLogInterceptor implements Interceptor {
 
-    /**
-     * ANSI 颜色代码常量，用于在支持 ANSI 的控制台（如 IntelliJ IDEA, VS Code）中显示彩色日志
-     */
-    private static class AnsiColor {
-        public static final String RESET = "\u001B[0m";
-        public static final String BLUE_BOLD = "\u001B[34;1m";
-        public static final String GREEN = "\u001B[32m";
-        public static final String YELLOW = "\u001B[33m";
-        public static final String CYAN = "\u001B[36m";
-        public static final String RED = "\u001B[31m";
-        public static final String BLUE = "\u001B[34m";
-        public static final String MAGENTA = "\u001B[35m";
-        public static final String BLACK = "\u001B[30m";
-        public static final String WHITE = "\u001B[37m";
-    }
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -65,11 +50,11 @@ public class SqlLogInterceptor implements Interceptor {
             // 使用 String.format 和颜色常量构建彩色日志
             String sqlLog = String.format(
                     "\n" +
-                            AnsiColor.CYAN + "======================================================== SQL Start ========================================================" + AnsiColor.RESET + "\n" +
-                            AnsiColor.YELLOW + "  Type: " + AnsiColor.MAGENTA + "%s\n" +
-                            AnsiColor.YELLOW + "  ID:   " + AnsiColor.GREEN + "%s\n" +
-                            AnsiColor.YELLOW + "  Sql:  " + AnsiColor.RESET + AnsiColor.BLUE + "%s" + AnsiColor.RESET + "\n" +
-                            AnsiColor.CYAN + "========================================================== SQL End =========================================================" + AnsiColor.RESET,
+                            AnsiColor.CYAN.getCode() + "======================================================== SQL Start ========================================================" + AnsiColor.RESET.getCode() + "\n" +
+                            AnsiColor.YELLOW.getCode() + "  Type: " + AnsiColor.MAGENTA.getCode() + "%s\n" +
+                            AnsiColor.YELLOW.getCode() + "  ID:   " + AnsiColor.GREEN.getCode() + "%s\n" +
+                            AnsiColor.YELLOW.getCode() + "  Sql:  " + AnsiColor.RESET.getCode() + AnsiColor.BLUE.getCode() + "%s" + AnsiColor.RESET.getCode() + "\n" +
+                            AnsiColor.CYAN.getCode() + "========================================================== SQL End =========================================================" + AnsiColor.RESET.getCode(),
                     sqlCommandType, id, fullSql
             );
             log.info(sqlLog);

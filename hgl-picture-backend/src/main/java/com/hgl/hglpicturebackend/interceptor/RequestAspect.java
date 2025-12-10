@@ -2,6 +2,7 @@ package com.hgl.hglpicturebackend.interceptor;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.hgl.hglpicturebackend.common.AnsiColor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -32,13 +33,6 @@ import java.util.stream.Collectors;
 @Component
 public class RequestAspect {
 
-    // ANSI 颜色代码定义（可在类中定义为常量）
-    private static final String RESET = "\u001B[0m";
-    private static final String BLUE = "\u001B[34m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String YELLOW = "\u001B[33m";
-    private static final String RED = "\u001B[31m";
-
     // 定义需要脱敏的字段名
     private static final Set<String> SENSITIVE_FIELDS = new HashSet<>(Arrays.asList("userPassword", "password", "passwd"));
     // 定义脱敏后的替换字符串
@@ -52,10 +46,10 @@ public class RequestAspect {
     public Object requestLogging(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
-        log.info(BLUE + "↓↓↓↓↓↓↓↓↓↓ 请求日志 ↓↓↓↓↓↓↓↓↓↓" + RESET);
-        log.info(GREEN + "请求接口: [{}] {}" + RESET, request.getMethod(), request.getRequestURI());
-        log.info(YELLOW + "请求方法: {}.{}" + RESET, joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName());
-        log.info(RED + "请求参数: {}" + RESET, JSONUtil.toJsonStr(processAndFilterArgs(joinPoint.getArgs())));
+        log.info("{}↓↓↓↓↓↓↓↓↓↓ 请求日志 ↓↓↓↓↓↓↓↓↓↓{}", AnsiColor.BLUE, AnsiColor.RESET);
+        log.info("{}请求接口: [{}] {}{}", AnsiColor.GREEN.getCode(), request.getMethod(), request.getRequestURI(), AnsiColor.RESET.getCode());
+        log.info("{}请求方法: {}.{}{}", AnsiColor.YELLOW.getCode(), joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), AnsiColor.RESET.getCode());
+        log.info("{}请求参数: {}{}", AnsiColor.RED.getDesc(), JSONUtil.toJsonStr(processAndFilterArgs(joinPoint.getArgs())), AnsiColor.RESET.getCode());
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -63,9 +57,9 @@ public class RequestAspect {
         stopWatch.stop();
         long elapsedTime = stopWatch.getTotalTimeMillis();
 
-        log.info(GREEN + "响应结果: {}" + RESET, JSONUtil.toJsonStr(result));
-        log.info(YELLOW + "请求耗时: {} ms" + RESET, elapsedTime);
-        log.info(BLUE + "↑↑↑↑↑↑↑↑↑↑ 请求日志 ↑↑↑↑↑↑↑↑↑↑" + RESET);
+        log.info("{}响应结果: {}{}", AnsiColor.GREEN.getCode(), JSONUtil.toJsonStr(result), AnsiColor.RESET.getCode());
+        log.info("{}请求耗时: {} ms{}", AnsiColor.YELLOW.getCode(), elapsedTime, AnsiColor.RESET.getCode());
+        log.info("{}↑↑↑↑↑↑↑↑↑↑ 请求日志 ↑↑↑↑↑↑↑↑↑↑{}", AnsiColor.BLUE.getCode(), AnsiColor.RESET.getCode());
 
         return result;
     }
@@ -88,6 +82,7 @@ public class RequestAspect {
 
     /**
      * 递归地对对象进行脱敏处理
+     *
      * @param obj 待处理的对象
      * @return 脱敏后的对象
      */
@@ -167,7 +162,7 @@ public class RequestAspect {
     private Object desensitizeOtherObject(Object obj) {
         try {
             String jsonStr = JSONUtil.toJsonStr(obj);
-            Map<String, Object> map = JSONUtil.toBean(jsonStr, Map.class,false);
+            Map<String, Object> map = JSONUtil.toBean(jsonStr, Map.class, false);
             return desensitizeObject(map);
         } catch (Exception e) {
             return obj;

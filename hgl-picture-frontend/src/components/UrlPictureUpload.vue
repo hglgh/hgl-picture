@@ -34,7 +34,6 @@ const fileUrl = ref<string>()
 
 /**
  * 上传图片
- * @param file
  */
 const handleUpload = async () => {
   loading.value = true

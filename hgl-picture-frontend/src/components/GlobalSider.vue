@@ -13,11 +13,11 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref, watchEffect } from 'vue'
-import { PictureOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons-vue'
+import { PictureOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import { SPACE_TYPE_ENUM } from '@/constants/space'
-import { getSpaceUserUsingPost, listMyTeamSpaceUsingPost } from '@/api/spaceUserController'
+import { listMyTeamSpaceUsingPost } from '@/api/spaceUserController'
 import { message } from 'ant-design-vue'
 
 const current = ref<string[]>(['/'])
@@ -82,7 +82,7 @@ const fetchTeamSpaceList = async () => {
   const response = await listMyTeamSpaceUsingPost({})
   if (response.data.code === 0 && response.data.data) {
     teamSpaceList.value = response.data.data
-  }else {
+  } else {
     message.error('加载我的团队空间失败,' + response.data.message)
   }
 }

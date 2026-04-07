@@ -49,7 +49,7 @@ public class RequestAspect {
         log.info("{}↓↓↓↓↓↓↓↓↓↓ 请求日志 ↓↓↓↓↓↓↓↓↓↓{}", AnsiColor.BLUE, AnsiColor.RESET);
         log.info("{}请求接口: [{}] {}{}", AnsiColor.GREEN.getCode(), request.getMethod(), request.getRequestURI(), AnsiColor.RESET.getCode());
         log.info("{}请求方法: {}.{}{}", AnsiColor.YELLOW.getCode(), joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), AnsiColor.RESET.getCode());
-        log.info("{}请求参数: {}{}", AnsiColor.RED.getDesc(), JSONUtil.toJsonStr(processAndFilterArgs(joinPoint.getArgs())), AnsiColor.RESET.getCode());
+        log.info("{}请求参数: {}{}", AnsiColor.RED.getCode(), JSONUtil.toJsonStr(processAndFilterArgs(joinPoint.getArgs())), AnsiColor.RESET.getCode());
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();

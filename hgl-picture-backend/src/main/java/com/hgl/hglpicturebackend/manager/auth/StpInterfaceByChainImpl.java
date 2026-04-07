@@ -12,6 +12,7 @@ import com.hgl.hglpicturebackend.exception.BusinessException;
 import com.hgl.hglpicturebackend.exception.ErrorCode;
 import com.hgl.hglpicturebackend.manager.auth.context.SpaceUserAuthContext;
 import com.hgl.hglpicturebackend.manager.auth.permission.PermissionHandlerManager;
+import com.hgl.hglpicturebackend.manager.strategy.PermissionStrategy;
 import com.hgl.hglpicturebackend.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,7 @@ public class StpInterfaceByChainImpl implements StpInterface {
     private String contextPath;
 
     @Resource
-    private PermissionHandlerManager permissionHandlerManager;
+    private List<PermissionStrategy> permissionStrategies;
 
     /**
      * 返回一个账号所拥有的权限码集合
@@ -51,18 +52,19 @@ public class StpInterfaceByChainImpl implements StpInterface {
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         // 1. 判断是否是空间类型的登录请求，如果不是直接返回空权限列表
-        if (!isSpaceLoginType(loginType)) {
+/*        if (!isSpaceLoginType(loginType)) {
             return new ArrayList<>();
-        }
+        }*/
 
         // 2. 获取当前请求的上下文信息
         SpaceUserAuthContext authContext = getAuthContextByRequest();
 
-        // 3. 获取当前用户
-        User loginUser = getCurrentUser(loginId);
-
-        // 4. 通过责任链处理权限验证
-        return permissionHandlerManager.handlePermission(loginId, loginUser, authContext);
+        // 3. 根据登录类型获取对应的权限策略
+        return permissionStrategies.stream()
+                .filter(strategy -> strategy.getType().equals(loginType))
+                .findFirst()
+                .map(strategy -> strategy.getPermissionList(loginId, authContext))
+                .orElse(new ArrayList<>());
     }
 
     /**
@@ -70,17 +72,6 @@ public class StpInterfaceByChainImpl implements StpInterface {
      */
     private boolean isSpaceLoginType(String loginType) {
         return StpKit.SPACE_TYPE.equals(loginType);
-    }
-
-    /**
-     * 获取当前登录用户
-     */
-    private User getCurrentUser(Object loginId) {
-        User loginUser = (User) StpKit.SPACE.getSessionByLoginId(loginId).get(USER_LOGIN_STATE);
-        if (loginUser == null) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未登录");
-        }
-        return loginUser;
     }
 
     /**
